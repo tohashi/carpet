@@ -2,53 +2,57 @@ Hole hole;
 
 void setup() {
   size(500, 500);
-  background(255);
   noStroke();
   fill(0);
+  rectMode(CENTER);
   smooth();
   
-  float sqLength = width / 3;
-  hole = new Hole(1, 0, 0, sqLength);
+  hole = new Hole(1, 0, 0, width);
+  hole.drawMe();
 }
 
 void draw() {
+  //background(255);
+  //hole.drawMe();
 }
 
 class Hole {
-  float level, baseX, baseY, startX, startY, sqLength;
-  Hole [] children = new Hole[9];
+  float level, baseX, baseY, startX, startY, lastLength, sqLength;
+  Hole[] children = new Hole[0];
   
   Hole(float lev, float bx, float by, float sqLen) {
     level = lev;
     baseX = bx;
     baseY = by;
-    startX = bx + sqLen;
-    startY = by + sqLen;
-    sqLength = sqLen;
+    startX = baseX + sqLen/2;
+    startY = baseY + sqLen/2;
+    lastLength = sqLen;
+    sqLength = sqLen / 3;
     if (sqLength > 1) {
       createChild();
     }
-    drawMe();
   }
   
   void createChild() {
-    float nextSqLength = sqLength / 3;
     float bx, by;
     int count = 0;
+    children = new Hole[9];
 
     for (int i = 0; i < 3; i++) {
-      by = baseX + (i * sqLength);
+      by = baseY + (i * sqLength);
       for (int j = 0; j < 3; j++) {
-        bx = baseY + (j * sqLength);
-        children[count] = new Hole(level + 1, bx, by, nextSqLength);
+        bx = baseX + (j * sqLength);
+        children[count] = new Hole(level + 1, bx, by, sqLength);
         count += 1;
       }
     }
   }
   
   void drawMe() {
-    noStroke();
-    fill(0);
     rect(startX, startY, sqLength, sqLength);
+
+    for (int i = 0; i < children.length; i++) {
+      children[i].drawMe();
+    }
   }
 }
