@@ -9,10 +9,10 @@ void setup() {
   smooth();
   
   hole = new Hole(1, 0, 0, width);
-  //hole.drawMe();
 }
 
 void draw() {
+  background(255);
   hole.drawMe();
 }
 
@@ -57,10 +57,8 @@ class Hole {
     if (cLen <= sqLength) {
       cLen += cLen_change;
       rect(startX, startY, cLen, cLen);
-    } else if (zooming) {
-      zooming = false;
-      rect(startX, startY, sqLength, sqLength);
     } else {
+      rect(startX, startY, sqLength, sqLength);
       for (int i = 0; i < children.length; i++) {
         children[i].drawMe();
       }
