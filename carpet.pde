@@ -1,14 +1,13 @@
 Hole hole;
 
 void setup() {
-  background(255);
   size(500, 500);
   noStroke();
   fill(0);
   rectMode(CENTER);
   smooth();
-  
-  hole = new Hole(1, 0, 0, width);
+
+  hole = new Hole(1, 0, 0, 0, width);
 }
 
 void draw() {
@@ -18,50 +17,56 @@ void draw() {
 
 class Hole {
   float level, baseX, baseY, startX, startY;
-  float lastLength, sqLength;
-  float cLen, cLen_change;
+  float lastLength, currentLength, lengthVar;
+  float drawLength = 0;
+  int index;
   boolean zooming = true;
   Hole[] children = new Hole[0];
-  
-  Hole(float lev, float bx, float by, float sqLen) {
+
+  Hole(float lev, int idx, float bx, float by, float len) {
     level = lev;
+    index = idx;
     baseX = bx;
     baseY = by;
-    startX = baseX + sqLen/2;
-    startY = baseY + sqLen/2;
-    lastLength = sqLen;
-    sqLength = sqLen / 3;
-    cLen = 0;
-    cLen_change = sqLength / 100;
-    if (sqLength > 1) {
+    startX = baseX + len/2;
+    startY = baseY + len/2;
+    lastLength = len;
+    currentLength = len / 3;
+    lengthVar = currentLength / 100;
+
+    if (currentLength > 1 && idx != 4) {
       createChild();
     }
   }
-  
+
   void createChild() {
-    float bx, by;
+    float nextBaseX, nextBaseY;
     int count = 0;
     children = new Hole[9];
 
     for (int i = 0; i < 3; i++) {
-      by = baseY + (i * sqLength);
+      nextBaseY = baseY + (i * currentLength);
       for (int j = 0; j < 3; j++) {
-        bx = baseX + (j * sqLength);
-        children[count] = new Hole(level + 1, bx, by, sqLength);
+        nextBaseX = baseX + (j * currentLength);
+        children[count] = new Hole(level + 1, count, nextBaseX, nextBaseY, currentLength);
         count += 1;
       }
     }
   }
-  
+
   void drawMe() {
-    if (cLen <= sqLength) {
-      cLen += cLen_change;
-      rect(startX, startY, cLen, cLen);
+    if (drawLength <= currentLength) {
+      drawLength += lengthVar;
+      rect(startX, startY, drawLength, drawLength);
     } else {
-      rect(startX, startY, sqLength, sqLength);
+      rect(startX, startY, currentLength, currentLength);
       for (int i = 0; i < children.length; i++) {
+        if (children[i].index == 4) {
+          continue;
+        }
         children[i].drawMe();
       }
     }
   }
 }
+
